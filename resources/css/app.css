@@ -1,0 +1,21 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --color-primary: #2563eb;
+  --color-secondary: #7c3aed;
+  --color-accent: #ec4899;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #0ea5e9;
+}
+
+* {
+  @apply transition-colors duration-200;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
