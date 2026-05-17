@@ -14,11 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
-            \App\Http\Middleware\HandleTenantCookie::class,
             \App\Http\Middleware\VerifyTenantAccess::class,
+            \App\Http\Middleware\SetTenantContext::class,
+            \App\Http\Middleware\SessionTimeout::class,
+            \App\Http\Middleware\ForcePasswordChange::class,
         ]);
 
-        $middleware->redirectGuestsTo(fn () => route('login'));
+        $middleware->redirectGuestsTo(fn () => route('auth.login'));
         $middleware->redirectUsersTo(fn () => route('dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
