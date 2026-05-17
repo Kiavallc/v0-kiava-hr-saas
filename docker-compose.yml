@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: kiava-app
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=kiava_hr
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=secret
+    volumes:
+      - ./:/app
+    networks:
+      - kiava
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16
+    container_name: kiava-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kiava_hr
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kiava
+
+  nginx:
+    image: nginx:alpine
+    container_name: kiava-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/app
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - kiava
+    depends_on:
+      - app
+
+  redis:
+    image: redis:7-alpine
+    container_name: kiava-redis
+    restart: unless-stopped
+    networks:
+      - kiava
+
+  reverb:
+    build: .
+    container_name: kiava-reverb
+    restart: unless-stopped
+    command: php artisan reverb:start
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+    networks:
+      - kiava
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+networks:
+  kiava:
+    driver: bridge

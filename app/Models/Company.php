@@ -24,10 +24,14 @@ class Company extends Model
         'storage_limit_gb',
         'status',
         'subscription_expires_at',
+        'stripe_customer_id',
+        'billing_email',
+        'is_active',
     ];
 
     protected $casts = [
         'subscription_expires_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     public function users(): HasMany
@@ -68,5 +72,39 @@ class Company extends Model
     public function loginSessions(): HasMany
     {
         return $this->hasMany(LoginSession::class);
+    }
+
+    public function stripeSubscriptions(): HasMany
+    {
+        return $this->hasMany(StripeSubscription::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function billingEvents(): HasMany
+    {
+        return $this->hasMany(BillingEvent::class);
+    }
+
+    public function documentStorage(): HasMany
+    {
+        return $this->hasMany(DocumentStorage::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->stripeSubscriptions()
+            ->where('status', 'active')
+            ->orWhere('status', 'trialing')
+            ->latest()
+            ->first();
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeSubscription() !== null;
     }
 }
