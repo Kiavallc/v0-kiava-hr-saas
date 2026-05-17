@@ -37,3 +37,13 @@ Route::prefix('v1')->group(function () {
     Route::post('/forgot-password', [\App\Http\Controllers\Api\AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [\App\Http\Controllers\Api\AuthController::class, 'resetPassword']);
 });
+
+// Real-time event simulator (protected by auth)
+Route::middleware('auth:sanctum')->prefix('realtime')->name('realtime.')->group(function () {
+    Route::post('/simulate/document-uploaded', [\App\Http\Controllers\RealtimeTestController::class, 'simulateDocumentUploaded']);
+    Route::post('/simulate/document-approved', [\App\Http\Controllers\RealtimeTestController::class, 'simulateDocumentApproved']);
+    Route::post('/simulate/document-rejected', [\App\Http\Controllers\RealtimeTestController::class, 'simulateDocumentRejected']);
+    Route::post('/simulate/document-expiring', [\App\Http\Controllers\RealtimeTestController::class, 'simulateDocumentExpiringSoon']);
+    Route::post('/simulate/document-expired', [\App\Http\Controllers\RealtimeTestController::class, 'simulateDocumentExpired']);
+    Route::post('/simulate/dashboard-stats', [\App\Http\Controllers\RealtimeTestController::class, 'simulateDashboardStats']);
+});

@@ -31,4 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Real-time test page
+    Route::get('/demo/realtime', [\App\Http\Controllers\RealtimeTestController::class, 'index'])->name('realtime.demo');
 });
