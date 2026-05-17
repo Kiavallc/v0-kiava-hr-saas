@@ -28,9 +28,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     // Real-time test page
     Route::get('/demo/realtime', [\App\Http\Controllers\RealtimeTestController::class, 'index'])->name('realtime.demo');
